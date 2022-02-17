@@ -72,7 +72,6 @@ if (len(sys.argv) == 7) and (sys.argv[1] == "-sip") and (sys.argv[3] == "-sp") a
     # MD5 hash of encrypted question text
     payload = tuple((key, encryptQues, md5hash.digest()))
 
-
     clientSocket = socket(AF_INET, SOCK_STREAM)
     clientSocket.connect((serverIP, serverPort))
 

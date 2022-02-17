@@ -48,23 +48,19 @@ if (len(sys.argv) == 5) and (sys.argv[1] == "-sp") and (sys.argv[3] == "-z"):
         print("decrypyQues:", decryptQues)
         print("md5hash", md5hash)
 
-        # now need to
-
-
         # Find a response to the question
         # Code for how to connect to wolframalpha found on geeksforgeeks.com
         # https://www.geeksforgeeks.org/python-create-a-simple-assistant-using-wolfram-alpha-api/
-        # wolfclient = wolframalpha.Client(wolframID)
-        # print("Question sent, waiting for response...")
-        # result = wolfclient.query(question)
-        #
-        # try:
-        #     answer = next(result.results).text
-        #     # print("Answer:", answer)
-        # except StopIteration:
-        #     print("Error: Invalid Question, WolframAlpha cannot answer")
-        #     break;
+        wolfclient = wolframalpha.Client(wolframID)
+        print("Question sent, waiting for response...")
+        result = wolfclient.query(decryptQues)
 
+        try:
+            answer = next(result.results).text
+            # print("Answer:", answer)
+        except StopIteration:
+            print("Error: Invalid Question, WolframAlpha cannot answer")
+            break
 
         #connectionSocket.send(answer.encode())
 
