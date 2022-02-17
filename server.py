@@ -62,7 +62,7 @@ if (len(sys.argv) == 5) and (sys.argv[1] == "-sp") and (sys.argv[3] == "-z"):
             print("Error: Invalid Question, WolframAlpha cannot answer")
             break
 
-        #connectionSocket.send(answer.encode())
+        connectionSocket.send(answer.encode())
 
         connectionSocket.close()
 
