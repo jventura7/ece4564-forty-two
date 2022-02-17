@@ -30,9 +30,9 @@ if (len(sys.argv) == 7) and (sys.argv[1] == "-sip") and (sys.argv[3] == "-sp") a
     serverIP = sys.argv[2]
     serverPort = int(sys.argv[4])
     socketSize = int(sys.argv[6])
-    print("serverIP:", serverIP)
-    print("serverPort:", serverPort)
-    print("socketSize:", socketSize)
+    #print("serverIP:", serverIP)
+    #print("serverPort:", serverPort)
+    #print("socketSize:", socketSize)
 
     print("[Client 01] - Connecting to " + str(serverIP) + " on port " + str(serverPort))
 
@@ -64,6 +64,8 @@ if (len(sys.argv) == 7) and (sys.argv[1] == "-sip") and (sys.argv[3] == "-sp") a
 
         # encryption key
         key = Fernet.generate_key()
+        print("[Client 05]  - Generated Encryption Key:", key)
+
         fernet = Fernet(key)
 
         # Encrypt question using python encryption library
@@ -77,23 +79,25 @@ if (len(sys.argv) == 7) and (sys.argv[1] == "-sip") and (sys.argv[3] == "-sp") a
         # Question text (encrypted)
         # MD5 hash of encrypted question text
         questionPayload = tuple((key, encryptQues, md5hash.digest()))
+        print("[Client 07] - Question Payload:", questionPayload)
 
         clientSocket = socket(AF_INET, SOCK_STREAM)
         clientSocket.connect((serverIP, serverPort))
 
-        request = question
-
         # No need to attach server name, port
         # clientSocket.send(request.encode())
-        questionPayload = pickle.dumps(questionPayload)
-        clientSocket.send(questionPayload)
+        pickle_questionPayload = pickle.dumps(questionPayload)
+
+        print("[Client 08] - Sending question:", pickle_questionPayload)
+        clientSocket.send(pickle_questionPayload)
 
         answerPayload = clientSocket.recv(socketSize)
 
-        #answer = clientSocket.recv(socketSize).decode()
-        #print("Answer:", answer)
+        unpickle_answerPayload = pickle.loads(answerPayload)
+        encryptAnswer, md5hashAnswer = unpickle_answerPayload
+        print("[Client 09] - Received data:", unpickle_answerPayload)
+        #encryptAnswer, md5hashAnswer = pickle.loads(answerPayload)
 
-        encryptAnswer, md5hashAnswer = pickle.loads(answerPayload)
 
         decryptAnswer = fernet.decrypt(encryptAnswer.decode("utf-8").encode())
         print("[Client 11] - Plain Text:", decryptAnswer)

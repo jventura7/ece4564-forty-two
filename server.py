@@ -47,7 +47,7 @@ if (len(sys.argv) == 5) and (sys.argv[1] == "-sp") and (sys.argv[3] == "-z"):
 
         decryptQues = decryptKey.decrypt(encryptQues.decode("utf-8").encode())
         print("decrypyQues:", decryptQues)
-        print("md5hash", md5hash)
+        print("md5hash:", md5hash)
 
         # Find a response to the question
         # Code for how to connect to wolframalpha found on geeksforgeeks.com
@@ -58,7 +58,7 @@ if (len(sys.argv) == 5) and (sys.argv[1] == "-sp") and (sys.argv[3] == "-z"):
 
         try:
             answer = next(result.results).text
-            print("Answer:", answer)
+            #print("Answer:", answer)
         except StopIteration:
             print("Error: Invalid Question, WolframAlpha cannot answer")
             break
