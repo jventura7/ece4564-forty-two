@@ -5,8 +5,8 @@ import os
 # 1. Receives question payload from the client
 if (len(sys.argv) == 5) and (sys.argv[1] == "-sp") and (sys.argv[3] == "-z"):
 
-    serverPort = sys.argv[2]
-    socketSize = sys.argv[4]
+    serverPort = int(sys.argv[2])
+    socketSize = int(sys.argv[4])
 
     print("serverPort:", serverPort)
     print("socketSize:", socketSize)
@@ -27,6 +27,15 @@ if (len(sys.argv) == 5) and (sys.argv[1] == "-sp") and (sys.argv[3] == "-z"):
         # read bytes from socket
         question = connectionSocket.recv(socketSize).decode()
         print("Question:", question)
+
+        # now need to
+
+
+
+
+        message = question
+
+        connectionSocket.send(message.encode())
 
         connectionSocket.close()
 

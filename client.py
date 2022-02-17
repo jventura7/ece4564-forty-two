@@ -22,35 +22,53 @@ import sys
 from ClientKeys import *
 from socket import *
 
-
-auth = tweepy.OAuthHandler(ckey, csecret)
-auth.set_access_token(atoken, asecret)
-
-api = tweepy.API(auth)
-public_tweets = api.home_timeline()
-
-tweetStr = ""
-
-hashtag = "#ECE4564T14"
-
-for tweet in public_tweets:
-    if hashtag in tweet.text:
-        #print(tweet.text)
-        tweetStr = tweet.text
-        break
-
-question = tweetStr.replace(" " + hashtag, "", 1)
-
-print("Question:", question)
-
 if (len(sys.argv) == 7) and (sys.argv[1] == "-sip") and (sys.argv[3] == "-sp") and (sys.argv[5] == "-z"):
 
     serverIP = sys.argv[2]
-    serverPort = sys.argv[4]
-    socketSize = sys.argv[6]
+    serverPort = int(sys.argv[4])
+    socketSize = int(sys.argv[6])
     print("serverIP:", serverIP)
     print("serverPort:", serverPort)
     print("socketSize:", socketSize)
+
+    print("[Client 01] - Connecting to " + str(serverIP) + " on port " + str(serverPort))
+
+    auth = tweepy.OAuthHandler(ckey, csecret)
+    auth.set_access_token(atoken, asecret)
+
+    api = tweepy.API(auth)
+    public_tweets = api.home_timeline()
+
+    tweetStr, hashtag = "", "#ECE4564T14"
+
+    print("[Client 02] - Listening for tweets from Twitter API that contain questions")
+
+    for tweet in public_tweets:
+        if hashtag in tweet.text:
+            # print(tweet.text)
+            tweetStr = tweet.text
+            break
+
+    question = tweetStr.replace(" " + hashtag, "", 1)
+
+    print("[Client 03] - New question found:", question)
+
+    # Encrypt question using python encryption library
+    # encryptQues =
+
+    # Question payload tuple
+        # Encrypt/Decrypt Key
+        # Question text (encrypted)
+        # MD5 hash of encrypted question text
+    payload = tuple()
+
+
+
+
+
+
+
+
 
     clientSocket = socket(AF_INET, SOCK_STREAM)
     clientSocket.connect((serverIP, serverPort))
@@ -60,7 +78,8 @@ if (len(sys.argv) == 7) and (sys.argv[1] == "-sip") and (sys.argv[3] == "-sp") a
     # No need to attach server name, port
     clientSocket.send(request.encode())
 
-    received = clientSocket.recv(1024).decode()
+    answer = clientSocket.recv(socketSize).decode()
+    print("Answer:", answer)
 
     clientSocket.close()
 
