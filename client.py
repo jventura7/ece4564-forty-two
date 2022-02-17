@@ -23,6 +23,7 @@ import hashlib
 from ClientKeys import *
 from socket import *
 from cryptography.fernet import Fernet
+import pickle
 
 if (len(sys.argv) == 7) and (sys.argv[1] == "-sip") and (sys.argv[3] == "-sp") and (sys.argv[5] == "-z"):
 
@@ -69,7 +70,7 @@ if (len(sys.argv) == 7) and (sys.argv[1] == "-sip") and (sys.argv[3] == "-sp") a
     # Encrypt/Decrypt Key
     # Question text (encrypted)
     # MD5 hash of encrypted question text
-    payload = tuple(key, encryptQues, md5hash)
+    payload = tuple((key, encryptQues, md5hash.digest()))
 
 
     clientSocket = socket(AF_INET, SOCK_STREAM)
@@ -79,6 +80,7 @@ if (len(sys.argv) == 7) and (sys.argv[1] == "-sip") and (sys.argv[3] == "-sp") a
 
     # No need to attach server name, port
     # clientSocket.send(request.encode())
+    payload = pickle.dumps(payload)
     clientSocket.send(payload)
 
     answer = clientSocket.recv(socketSize).decode()

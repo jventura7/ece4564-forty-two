@@ -4,6 +4,7 @@ import wolframalpha
 from ServerKeys import *
 from cryptography.fernet import Fernet
 import os
+import pickle
 
 # 1. Receives question payload from the client
 if (len(sys.argv) == 5) and (sys.argv[1] == "-sp") and (sys.argv[3] == "-z"):
@@ -32,16 +33,20 @@ if (len(sys.argv) == 5) and (sys.argv[1] == "-sp") and (sys.argv[3] == "-z"):
         # print("Question:", question)
 
         # receive payload from socket
-        payload = connectionSocket.recv(socketSize).decode()
+        payload = connectionSocket.recv(socketSize)
         # print("Question:", question)
 
-        key, encryptQues, md5hash = payload
-        # retrieve encryption key
+        key, encryptQues, md5hash = pickle.loads(payload)
+        print("key:", key)
+        print("encryptQues:", encryptQues)
+        print("md5hash:", md5hash)
 
-        decryptQues = key.decrypt(encryptQues.encode())
+        # retrieve encryption key
+        decryptKey = Fernet(key)
+
+        decryptQues = decryptKey.decrypt(encryptQues.decode("utf-8").encode())
         print("decrypyQues:", decryptQues)
         print("md5hash", md5hash)
-
 
         # now need to
 
