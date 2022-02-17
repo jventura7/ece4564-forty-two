@@ -47,39 +47,41 @@ if (len(sys.argv) == 5) and (sys.argv[1] == "-sp") and (sys.argv[3] == "-z"):
         # retrieve encryption key
         decryptKey = Fernet(key)
 
-        decryptQues = decryptKey.decrypt(encryptQues.decode("utf-8").encode()).decode("utf-8")
-        print("[Server 06] - Plain Text:", decryptQues)
+        questionChecksum = hashlib.md5(encryptQues)
+        if questionChecksum == md5hash:
+            decryptQues = decryptKey.decrypt(encryptQues.decode("utf-8").encode()).decode("utf-8")
+            print("[Server 06] - Plain Text:", decryptQues)
 
-        # print("decryptQues:", decryptQues)
-        # print("md5hash:", md5hash)
+            # print("decryptQues:", decryptQues)
+            # print("md5hash:", md5hash)
 
-        # Find a response to the question
-        # Code for how to connect to wolframalpha found on geeksforgeeks.com
-        # https://www.geeksforgeeks.org/python-create-a-simple-assistant-using-wolfram-alpha-api/
-        wolfclient = wolframalpha.Client(wolframID)
-        print("[Server 08] - Sending question to Wolframalpha")
-        result = wolfclient.query(decryptQues)
+            # Find a response to the question
+            # Code for how to connect to wolframalpha found on geeksforgeeks.com
+            # https://www.geeksforgeeks.org/python-create-a-simple-assistant-using-wolfram-alpha-api/
+            wolfclient = wolframalpha.Client(wolframID)
+            print("[Server 08] - Sending question to Wolframalpha")
+            result = wolfclient.query(decryptQues)
 
-        try:
-            answer = next(result.results).text
-            print("[Server 09] - Received answer from Wolframalpha:", answer)
-            #print("Answer:", answer)
-        except StopIteration:
-            print("Error: Invalid Question, WolframAlpha cannot answer")
-            break
+            try:
+                answer = next(result.results).text
+                print("[Server 09] - Received answer from Wolframalpha:", answer)
+                #print("Answer:", answer)
+            except StopIteration:
+                print("Error: Invalid Question, WolframAlpha cannot answer")
+                break
 
-        fernet = Fernet(key)
-        encryptAnswer = fernet.encrypt(answer.encode())
+            fernet = Fernet(key)
+            encryptAnswer = fernet.encrypt(answer.encode())
 
-        md5hashAnswer = hashlib.md5(encryptAnswer)
+            md5hashAnswer = hashlib.md5(encryptAnswer)
 
-        # Answer Payload: Answer text (encrypted), MD5 hash of encrypted answer text
-        answerPayload = tuple((encryptAnswer, md5hashAnswer.digest()))
-        answerPayload = pickle.dumps(answerPayload)
+            # Answer Payload: Answer text (encrypted), MD5 hash of encrypted answer text
+            answerPayload = tuple((encryptAnswer, md5hashAnswer.digest()))
+            answerPayload = pickle.dumps(answerPayload)
 
-        connectionSocket.send(answerPayload)
+            connectionSocket.send(answerPayload)
 
-        connectionSocket.close()
+            connectionSocket.close()
 
 else:
     print("ERROR: Invalid Input")

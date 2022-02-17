@@ -92,8 +92,10 @@ if (len(sys.argv) == 7) and (sys.argv[1] == "-sip") and (sys.argv[3] == "-sp") a
         encryptAnswer, md5hashAnswer = unpickle_answerPayload
         print("[Client 09] - Received data:", unpickle_answerPayload)
 
-        decryptAnswer = fernet.decrypt(encryptAnswer.decode("utf-8").encode()).decode("utf-8")
-        print("[Client 11] - Plain Text:", decryptAnswer)
+        answerChecksum = hashlib.md5(encryptAnswer)
+        if answerChecksum == md5hashAnswer:
+            decryptAnswer = fernet.decrypt(encryptAnswer.decode("utf-8").encode()).decode("utf-8")
+            print("[Client 11] - Plain Text:", decryptAnswer)
 
         clientSocket.close()
 else:
