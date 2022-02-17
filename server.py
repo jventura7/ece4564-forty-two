@@ -1,3 +1,4 @@
+import hashlib
 from socket import *
 import sys
 import wolframalpha
@@ -62,7 +63,17 @@ if (len(sys.argv) == 5) and (sys.argv[1] == "-sp") and (sys.argv[3] == "-z"):
             print("Error: Invalid Question, WolframAlpha cannot answer")
             break
 
-        connectionSocket.send(answer.encode())
+
+        fernet = Fernet(key)
+        encryptAnswer = fernet.encrypt(answer.encode())
+
+        md5hashAnswer = hashlib.md5(encryptAnswer)
+
+        # Answer Payload: Answer text (encrypted), MD5 hash of encrypted answer text
+        answerPayload = tuple((encryptAnswer, md5hashAnswer))
+        answerPayload = pickle.dumps(answerPayload)
+
+        connectionSocket.send(answerPayload)
 
         connectionSocket.close()
 

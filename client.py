@@ -52,7 +52,9 @@ if (len(sys.argv) == 7) and (sys.argv[1] == "-sip") and (sys.argv[3] == "-sp") a
             tweetStr = tweet.text
             break
 
-    question = tweetStr.replace(" " + hashtag, "", 1)
+    question = tweetStr.replace(hashtag, "")
+    question = question.lstrip()
+    question = question.rstrip()
 
     print("[Client 03] - New question found:", question)
 
