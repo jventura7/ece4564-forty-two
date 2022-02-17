@@ -48,6 +48,8 @@ if (len(sys.argv) == 5) and (sys.argv[1] == "-sp") and (sys.argv[3] == "-z"):
         decryptKey = Fernet(key)
 
         questionChecksum = hashlib.md5(encryptQues)
+        print('checksum: ', questionChecksum)
+        print('md5:, ', md5hash)
         if questionChecksum == md5hash:
             decryptQues = decryptKey.decrypt(encryptQues.decode("utf-8").encode()).decode("utf-8")
             print("[Server 06] - Plain Text:", decryptQues)
@@ -81,7 +83,7 @@ if (len(sys.argv) == 5) and (sys.argv[1] == "-sp") and (sys.argv[3] == "-z"):
 
             connectionSocket.send(answerPayload)
 
-            connectionSocket.close()
+        connectionSocket.close()
 
 else:
     print("ERROR: Invalid Input")
