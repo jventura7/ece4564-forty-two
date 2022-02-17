@@ -34,10 +34,10 @@ if (len(sys.argv) == 5) and (sys.argv[1] == "-sp") and (sys.argv[3] == "-z"):
         # print("Question:", question)
 
         # receive payload from socket
-        payload = connectionSocket.recv(socketSize)
+        questionPayload = connectionSocket.recv(socketSize)
         # print("Question:", question)
 
-        key, encryptQues, md5hash = pickle.loads(payload)
+        key, encryptQues, md5hash = pickle.loads(questionPayload)
         print("key:", key)
         print("encryptQues:", encryptQues)
         print("md5hash:", md5hash)
@@ -58,11 +58,10 @@ if (len(sys.argv) == 5) and (sys.argv[1] == "-sp") and (sys.argv[3] == "-z"):
 
         try:
             answer = next(result.results).text
-            # print("Answer:", answer)
+            print("Answer:", answer)
         except StopIteration:
             print("Error: Invalid Question, WolframAlpha cannot answer")
             break
-
 
         fernet = Fernet(key)
         encryptAnswer = fernet.encrypt(answer.encode())
@@ -70,7 +69,7 @@ if (len(sys.argv) == 5) and (sys.argv[1] == "-sp") and (sys.argv[3] == "-z"):
         md5hashAnswer = hashlib.md5(encryptAnswer)
 
         # Answer Payload: Answer text (encrypted), MD5 hash of encrypted answer text
-        answerPayload = tuple((encryptAnswer, md5hashAnswer))
+        answerPayload = tuple((encryptAnswer, md5hashAnswer.digest()))
         answerPayload = pickle.dumps(answerPayload)
 
         connectionSocket.send(answerPayload)

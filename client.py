@@ -56,38 +56,49 @@ if (len(sys.argv) == 7) and (sys.argv[1] == "-sip") and (sys.argv[3] == "-sp") a
     question = question.lstrip()
     question = question.rstrip()
 
-    print("[Client 03] - New question found:", question)
+    if len(question) == 0:
+        print("Error: No question asked, retry with question + hashtag")
+    else:
 
-    # encryption key
-    key = Fernet.generate_key()
-    fernet = Fernet(key)
+        print("[Client 03] - New question found:", question)
 
-    # Encrypt question using python encryption library
-    encryptQues = fernet.encrypt(question.encode())
+        # encryption key
+        key = Fernet.generate_key()
+        fernet = Fernet(key)
 
-    # encode encrypted question using md5 hash
-    md5hash = hashlib.md5(encryptQues)
+        # Encrypt question using python encryption library
+        encryptQues = fernet.encrypt(question.encode())
 
-    # Construct question payload
-    # Encrypt/Decrypt Key
-    # Question text (encrypted)
-    # MD5 hash of encrypted question text
-    payload = tuple((key, encryptQues, md5hash.digest()))
+        # encode encrypted question using md5 hash
+        md5hash = hashlib.md5(encryptQues)
 
-    clientSocket = socket(AF_INET, SOCK_STREAM)
-    clientSocket.connect((serverIP, serverPort))
+        # Construct question payload
+        # Encrypt/Decrypt Key
+        # Question text (encrypted)
+        # MD5 hash of encrypted question text
+        questionPayload = tuple((key, encryptQues, md5hash.digest()))
 
-    request = question
+        clientSocket = socket(AF_INET, SOCK_STREAM)
+        clientSocket.connect((serverIP, serverPort))
 
-    # No need to attach server name, port
-    # clientSocket.send(request.encode())
-    payload = pickle.dumps(payload)
-    clientSocket.send(payload)
+        request = question
 
-    answer = clientSocket.recv(socketSize).decode()
-    print("Answer:", answer)
+        # No need to attach server name, port
+        # clientSocket.send(request.encode())
+        questionPayload = pickle.dumps(questionPayload)
+        clientSocket.send(questionPayload)
 
-    clientSocket.close()
+        answerPayload = clientSocket.recv(socketSize)
+
+        #answer = clientSocket.recv(socketSize).decode()
+        #print("Answer:", answer)
+
+        encryptAnswer, md5hashAnswer = pickle.loads(answerPayload)
+
+        decryptAnswer = fernet.decrypt(encryptAnswer.decode("utf-8").encode())
+        print("[Client 11] - Plain Text:", decryptAnswer)
+
+        clientSocket.close()
 
 else:
     print("ERROR: Invalid Input")
