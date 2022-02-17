@@ -74,10 +74,6 @@ if (len(sys.argv) == 7) and (sys.argv[1] == "-sip") and (sys.argv[3] == "-sp") a
         # encode encrypted question using md5 hash
         md5hash = hashlib.md5(encryptQues)
 
-        # Construct question payload
-        # Encrypt/Decrypt Key
-        # Question text (encrypted)
-        # MD5 hash of encrypted question text
         questionPayload = tuple((key, encryptQues, md5hash.digest()))
         print("[Client 07] - Question Payload:", questionPayload)
 
@@ -85,7 +81,6 @@ if (len(sys.argv) == 7) and (sys.argv[1] == "-sip") and (sys.argv[3] == "-sp") a
         clientSocket.connect((serverIP, serverPort))
 
         # No need to attach server name, port
-        # clientSocket.send(request.encode())
         pickle_questionPayload = pickle.dumps(questionPayload)
 
         print("[Client 08] - Sending question:", pickle_questionPayload)
@@ -96,14 +91,11 @@ if (len(sys.argv) == 7) and (sys.argv[1] == "-sip") and (sys.argv[3] == "-sp") a
         unpickle_answerPayload = pickle.loads(answerPayload)
         encryptAnswer, md5hashAnswer = unpickle_answerPayload
         print("[Client 09] - Received data:", unpickle_answerPayload)
-        #encryptAnswer, md5hashAnswer = pickle.loads(answerPayload)
 
-
-        decryptAnswer = fernet.decrypt(encryptAnswer.decode("utf-8").encode())
+        decryptAnswer = fernet.decrypt(encryptAnswer.decode("utf-8").encode()).decode("utf-8")
         print("[Client 11] - Plain Text:", decryptAnswer)
 
         clientSocket.close()
-
 else:
     print("ERROR: Invalid Input")
 
