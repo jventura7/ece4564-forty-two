@@ -14,8 +14,8 @@ if (len(sys.argv) == 5) and (sys.argv[1] == "-sp") and (sys.argv[3] == "-z"):
     socketSize = int(sys.argv[4])
     serverIP = "192.168.1.34"
 
-    print("serverPort:", serverPort)
-    print("socketSize:", socketSize)
+    # print("serverPort:", serverPort)
+    # print("socketSize:", socketSize)
 
     # Create TCP welcoming socket
     serverSocket = socket(AF_INET, SOCK_STREAM)
