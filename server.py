@@ -1,5 +1,7 @@
 from socket import *
 import sys
+import wolframalpha
+from ServerKeys import *
 import os
 
 # 1. Receives question payload from the client
@@ -31,21 +33,24 @@ if (len(sys.argv) == 5) and (sys.argv[1] == "-sp") and (sys.argv[3] == "-z"):
         # now need to
 
 
+        # Find a response to the question
+        wolfclient = wolframalpha.Client(wolframID)
+        print("Question sent, waiting for response...")
+        result = wolfclient.query(question)
 
+        try:
+            answer = next(result.results).text
+            print("Answer:", answer)
+        except StopIteration:
+            print("Error: Invalid Question, WolframAlpha cannot answer")
+            break;
 
-        message = question
-
-        connectionSocket.send(message.encode())
+        connectionSocket.send(answer.encode())
 
         connectionSocket.close()
 
 else:
     print("ERROR: Invalid Input")
-
-
-
-
-
 
 
 # 2. Parses question payload

@@ -33,9 +33,9 @@ if (len(sys.argv) == 7) and (sys.argv[1] == "-sip") and (sys.argv[3] == "-sp") a
 
     print("[Client 01] - Connecting to " + str(serverIP) + " on port " + str(serverPort))
 
+    # code from "HACK ANON" YouTube Channel, Video: Twitter Api with python | example tutorial to get tweets
     auth = tweepy.OAuthHandler(ckey, csecret)
     auth.set_access_token(atoken, asecret)
-
     api = tweepy.API(auth)
     public_tweets = api.home_timeline()
 
@@ -61,12 +61,6 @@ if (len(sys.argv) == 7) and (sys.argv[1] == "-sip") and (sys.argv[3] == "-sp") a
         # Question text (encrypted)
         # MD5 hash of encrypted question text
     payload = tuple()
-
-
-
-
-
-
 
 
 
