@@ -16,7 +16,9 @@ for tweet in public_tweets:
         tweetStr = tweet.text
         break
 
-question = tweetStr.replace(" " + hashtag, "", 1)
+question = tweetStr.replace(hashtag, "")
+question = question.lstrip()
+question = question.rstrip()
 
 print("Question:", question)
 # Find a response to the question
@@ -28,5 +30,3 @@ try:
     print("Answer:", txtAnswer)
 except StopIteration:
     print("Error: Invalid Question, WolframAlpha cannot answer")
-
-
