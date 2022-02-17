@@ -2,6 +2,7 @@ from socket import *
 import sys
 import wolframalpha
 from ServerKeys import *
+from cryptography.fernet import Fernet
 import os
 
 # 1. Receives question payload from the client
@@ -27,25 +28,40 @@ if (len(sys.argv) == 5) and (sys.argv[1] == "-sp") and (sys.argv[3] == "-z"):
         connectionSocket, address = serverSocket.accept()
 
         # read bytes from socket
-        question = connectionSocket.recv(socketSize).decode()
-        print("Question:", question)
+        # question = connectionSocket.recv(socketSize).decode()
+        # print("Question:", question)
+
+        # receive payload from socket
+        payload = connectionSocket.recv(socketSize).decode()
+        # print("Question:", question)
+
+        key, encryptQues, md5hash = payload
+        # retrieve encryption key
+
+        decryptQues = key.decrypt(encryptQues.encode())
+        print("decrypyQues:", decryptQues)
+        print("md5hash", md5hash)
+
 
         # now need to
 
 
         # Find a response to the question
-        wolfclient = wolframalpha.Client(wolframID)
-        print("Question sent, waiting for response...")
-        result = wolfclient.query(question)
+        # Code for how to connect to wolframalpha found on geeksforgeeks.com
+        # https://www.geeksforgeeks.org/python-create-a-simple-assistant-using-wolfram-alpha-api/
+        # wolfclient = wolframalpha.Client(wolframID)
+        # print("Question sent, waiting for response...")
+        # result = wolfclient.query(question)
+        #
+        # try:
+        #     answer = next(result.results).text
+        #     # print("Answer:", answer)
+        # except StopIteration:
+        #     print("Error: Invalid Question, WolframAlpha cannot answer")
+        #     break;
 
-        try:
-            answer = next(result.results).text
-            print("Answer:", answer)
-        except StopIteration:
-            print("Error: Invalid Question, WolframAlpha cannot answer")
-            break;
 
-        connectionSocket.send(answer.encode())
+        #connectionSocket.send(answer.encode())
 
         connectionSocket.close()
 

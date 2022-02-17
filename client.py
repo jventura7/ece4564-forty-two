@@ -19,8 +19,10 @@
 #Code from youtube source to extract Twitter posts
 import tweepy
 import sys
+import hashlib
 from ClientKeys import *
 from socket import *
+from cryptography.fernet import Fernet
 
 if (len(sys.argv) == 7) and (sys.argv[1] == "-sip") and (sys.argv[3] == "-sp") and (sys.argv[5] == "-z"):
 
@@ -53,15 +55,21 @@ if (len(sys.argv) == 7) and (sys.argv[1] == "-sip") and (sys.argv[3] == "-sp") a
 
     print("[Client 03] - New question found:", question)
 
+    # encryption key
+    key = Fernet.generate_key()
+    fernet = Fernet(key)
+
     # Encrypt question using python encryption library
-    # encryptQues =
+    encryptQues = fernet.encrypt(question.encode())
 
-    # Question payload tuple
-        # Encrypt/Decrypt Key
-        # Question text (encrypted)
-        # MD5 hash of encrypted question text
-    payload = tuple()
+    # encode encrypted question using md5 hash
+    md5hash = hashlib.md5(encryptQues)
 
+    # Construct question payload
+    # Encrypt/Decrypt Key
+    # Question text (encrypted)
+    # MD5 hash of encrypted question text
+    payload = tuple(key, encryptQues, md5hash)
 
 
     clientSocket = socket(AF_INET, SOCK_STREAM)
@@ -70,7 +78,8 @@ if (len(sys.argv) == 7) and (sys.argv[1] == "-sip") and (sys.argv[3] == "-sp") a
     request = question
 
     # No need to attach server name, port
-    clientSocket.send(request.encode())
+    # clientSocket.send(request.encode())
+    clientSocket.send(payload)
 
     answer = clientSocket.recv(socketSize).decode()
     print("Answer:", answer)
