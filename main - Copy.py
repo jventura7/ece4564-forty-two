@@ -19,14 +19,16 @@ for tweet in public_tweets:
 question = tweetStr.replace(hashtag, "")
 question = question.lstrip()
 question = question.rstrip()
-
-print("Question:", question)
-# Find a response to the question
-wolfclient = wolframalpha.Client(wolframID)
-print("Question sent, waiting for response...")
-result = wolfclient.query(question)
-try:
-    txtAnswer = next(result.results).text
-    print("Answer:", txtAnswer)
-except StopIteration:
-    print("Error: Invalid Question, WolframAlpha cannot answer")
+if len(question) == 0:
+    print("Error: No question asked retry with question + hashtag")
+else:
+    print("Question:", question)
+    # Find a response to the question
+    wolfclient = wolframalpha.Client(wolframID)
+    print("Question sent, waiting for response...")
+    result = wolfclient.query(question)
+    try:
+        txtAnswer = next(result.results).text
+        print("Answer:", txtAnswer)
+    except StopIteration:
+        print("Error: Invalid Question, WolframAlpha cannot answer")
