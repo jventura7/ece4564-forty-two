@@ -93,7 +93,7 @@ if (len(sys.argv) == 7) and (sys.argv[1] == "-sip") and (sys.argv[3] == "-sp") a
         print("[Client 09] - Received data:", unpickle_answerPayload)
 
         answerChecksum = hashlib.md5(encryptAnswer)
-        if answerChecksum == md5hashAnswer:
+        if answerChecksum.digest() == md5hashAnswer:
             decryptAnswer = fernet.decrypt(encryptAnswer.decode("utf-8").encode()).decode("utf-8")
             print("[Client 11] - Plain Text:", decryptAnswer)
 

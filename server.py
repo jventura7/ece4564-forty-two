@@ -30,7 +30,7 @@ if (len(sys.argv) == 5) and (sys.argv[1] == "-sp") and (sys.argv[3] == "-z"):
     while True:
         # server waits on accept() for incoming requests, new socket created on return
         connectionSocket, address = serverSocket.accept()
-        print("[Server 03] - Accepted client connection from ", address, " on port ", connectionSocket)
+        print("[Server 03] - Accepted client connection from ", address, " on port ", serverPort)
 
         # receive payload from socket
         unpickle_questionPayload = connectionSocket.recv(socketSize)
@@ -48,9 +48,7 @@ if (len(sys.argv) == 5) and (sys.argv[1] == "-sp") and (sys.argv[3] == "-z"):
         decryptKey = Fernet(key)
 
         questionChecksum = hashlib.md5(encryptQues)
-        print('checksum: ', questionChecksum)
-        print('md5:, ', md5hash)
-        if questionChecksum == md5hash:
+        if questionChecksum.digest() == md5hash:
             decryptQues = decryptKey.decrypt(encryptQues.decode("utf-8").encode()).decode("utf-8")
             print("[Server 06] - Plain Text:", decryptQues)
 
