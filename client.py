@@ -39,65 +39,74 @@ if (len(sys.argv) == 7) and (sys.argv[1] == "-sip") and (sys.argv[3] == "-sp") a
     # code from "HACK ANON" YouTube Channel, Video: Twitter Api with python | example tutorial to get tweets
     auth = tweepy.OAuthHandler(ckey, csecret)
     auth.set_access_token(atoken, asecret)
-    api = tweepy.API(auth)
-    public_tweets = api.home_timeline()
 
-    tweetStr, hashtag = "", "#ECE4564T14"
+    loop = True
+    while loop:
+        keepLoop = input('Look for tweets? Y/N: ')
+        if keepLoop == 'Y':
+            api = tweepy.API(auth)
+            public_tweets = api.home_timeline()
 
-    print("[Client 02] - Listening for tweets from Twitter API that contain questions")
+            tweetStr, hashtag = "", "#ECE4564T14"
 
-    for tweet in public_tweets:
-        if hashtag in tweet.text:
-            # print(tweet.text)
-            tweetStr = tweet.text
-            break
+            print("[Client 02] - Listening for tweets from Twitter API that contain questions")
 
-    question = tweetStr.replace(hashtag, "")
-    question = question.lstrip()
-    question = question.rstrip()
+            for tweet in public_tweets:
+                if hashtag in tweet.text:
+                    # print(tweet.text)
+                    tweetStr = tweet.text
+                    break
 
-    if len(question) == 0:
-        print("Error: No question asked, retry with question + hashtag")
-    else:
+            question = tweetStr.replace(hashtag, "")
+            question = question.lstrip()
+            question = question.rstrip()
 
-        print("[Client 03] - New question found:", question)
+            if len(question) == 0:
+                print("Error: No question asked, retry with question + hashtag")
+            else:
 
-        # encryption key
-        key = Fernet.generate_key()
-        print("[Client 05]  - Generated Encryption Key:", key)
+                print("[Client 03] - New question found:", question)
 
-        fernet = Fernet(key)
+                # encryption key
+                key = Fernet.generate_key()
+                print("[Client 05]  - Generated Encryption Key:", key)
 
-        # Encrypt question using python encryption library
-        encryptQues = fernet.encrypt(question.encode())
+                fernet = Fernet(key)
 
-        # encode encrypted question using md5 hash
-        md5hash = hashlib.md5(encryptQues)
+                # Encrypt question using python encryption library
+                encryptQues = fernet.encrypt(question.encode())
 
-        questionPayload = tuple((key, encryptQues, md5hash.digest()))
-        print("[Client 07] - Question Payload:", questionPayload)
+                # encode encrypted question using md5 hash
+                md5hash = hashlib.md5(encryptQues)
 
-        clientSocket = socket(AF_INET, SOCK_STREAM)
-        clientSocket.connect((serverIP, serverPort))
+                questionPayload = tuple((key, encryptQues, md5hash.digest()))
+                print("[Client 07] - Question Payload:", questionPayload)
 
-        # No need to attach server name, port
-        pickle_questionPayload = pickle.dumps(questionPayload)
+                clientSocket = socket(AF_INET, SOCK_STREAM)
+                clientSocket.connect((serverIP, serverPort))
 
-        print("[Client 08] - Sending question:", pickle_questionPayload)
-        clientSocket.send(pickle_questionPayload)
+                # No need to attach server name, port
+                pickle_questionPayload = pickle.dumps(questionPayload)
 
-        answerPayload = clientSocket.recv(socketSize)
+                print("[Client 08] - Sending question:", pickle_questionPayload)
+                clientSocket.send(pickle_questionPayload)
 
-        unpickle_answerPayload = pickle.loads(answerPayload)
-        encryptAnswer, md5hashAnswer = unpickle_answerPayload
-        print("[Client 09] - Received data:", unpickle_answerPayload)
+                answerPayload = clientSocket.recv(socketSize)
 
-        answerChecksum = hashlib.md5(encryptAnswer)
-        if answerChecksum.digest() == md5hashAnswer:
-            decryptAnswer = fernet.decrypt(encryptAnswer.decode("utf-8").encode()).decode("utf-8")
-            print("[Client 11] - Plain Text:", decryptAnswer)
+                unpickle_answerPayload = pickle.loads(answerPayload)
+                encryptAnswer, md5hashAnswer = unpickle_answerPayload
+                print("[Client 09] - Received data:", unpickle_answerPayload)
 
-        clientSocket.close()
+                answerChecksum = hashlib.md5(encryptAnswer)
+                if answerChecksum.digest() == md5hashAnswer:
+                    decryptAnswer = fernet.decrypt(encryptAnswer.decode("utf-8").encode()).decode("utf-8")
+                    print("[Client 11] - Plain Text:", decryptAnswer)
+        elif keepLoop == 'N':
+            print('Stopped program.')
+            clientSocket.close()
+            loop = False
+        else:
+            print("Invalid Response, type either Y/N")
 else:
     print("ERROR: Invalid Input")
 
