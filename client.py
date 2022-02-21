@@ -75,6 +75,7 @@ if (len(sys.argv) == 7) and (sys.argv[1] == "-sip") and (sys.argv[3] == "-sp") a
 
                 # Encrypt question using python encryption library
                 encryptQues = fernet.encrypt(question.encode())
+                print("[Client 06] - Cipher Text: ", encryptQues)
 
                 # encode encrypted question using md5 hash
                 md5hash = hashlib.md5(encryptQues)
