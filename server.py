@@ -76,7 +76,7 @@ if (len(sys.argv) == 5) and (sys.argv[1] == "-sp") and (sys.argv[3] == "-z"):
             print("[Server 11] - Cipher Text: ", encryptAnswer)
 
             md5hashAnswer = hashlib.md5(encryptAnswer)
-            print("[Server 12] - Generated MD5 Checksum: ", md5hashAnswer)
+            print("[Server 12] - Generated MD5 Checksum: ", md5hashAnswer.digest())
 
             # Answer Payload: Answer text (encrypted), MD5 hash of encrypted answer text
             answerPayload = tuple((encryptAnswer, md5hashAnswer.digest()))
